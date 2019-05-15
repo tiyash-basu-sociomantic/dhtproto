@@ -21,6 +21,7 @@ public abstract class GetChannelsProtocol_v0 : IRequest
     import swarm.neo.connection.RequestOnConnBase;
     import dhtproto.common.GetChannels;
     import dhtproto.common.RequestCodes;
+    import dhtproto.node.neo.request.core.IRequestResources;
     import dhtproto.node.neo.request.core.Mixins;
     import ocean.core.Array : copy;
     import ocean.transition;
@@ -53,43 +54,9 @@ public abstract class GetChannelsProtocol_v0 : IRequest
     public void handle ( RequestOnConn connection, Object resources,
         Const!(void)[] init_payload )
     {
-        // Dummy implementation to satisfy interface definition
-    }
+        this.initialise(connection, resources);
 
-    /***************************************************************************
-
-        Called by the connection handler immediately after the request code and
-        version have been parsed from a message received over the connection.
-        Allows the request handler to process the remainder of the incoming
-        message, before the connection handler sends the supported code back to
-        the client.
-
-        Note: the initial payload is a slice of the connection's read buffer.
-        This means that when the request-on-conn fiber suspends, the contents of
-        the buffer (hence the slice) may change. It is thus *absolutely
-        essential* that this method does not suspend the fiber. (This precludes
-        all I/O operations on the connection.)
-
-        Params:
-            init_payload = initial message payload read from the connection
-
-    ***************************************************************************/
-
-    public void preSupportedCodeSent ( Const!(void)[] init_payload )
-    {
-        // Nothing more to parse from the payload.
-    }
-
-    /***************************************************************************
-
-        Called by the connection handler after the supported code has been sent
-        back to the client.
-
-    ***************************************************************************/
-
-    public void postSupportedCodeSent ( )
-    {
-        auto channel_buf = this.resources.getVoidBuffer();
+        auto channel_buf = (cast(IRequestResources)resources).getVoidBuffer();
 
         foreach ( channel; this )
         {
