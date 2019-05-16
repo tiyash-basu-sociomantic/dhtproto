@@ -88,25 +88,16 @@ public abstract scope class Put : SingleKey
 
     /***************************************************************************
 
-        TODO: this method should be made abstract, as the record size limit is
-        now intended to be an implementation detail of the node, rather than
-        a constant defined by the protcol. Not making this abstract now in order
-        to avoid a breaking change in a minor branch, but using the magic word
-        "deprecated" so we'll find it when we do the next major release.
-
         Returns:
             the maximum size (in bytes) allowed for a record to be added to the
             storage engine
 
     ***************************************************************************/
 
-    protected size_t recordSizeLimit ( )
-    {
-        return RecordBatcher.DefaultMaxBatchSize;
-    }
+    protected size_t recordSizeLimit ( );
 
     /***************************************************************************
-    
+
         Stores incoming record
 
         Params:
@@ -132,7 +123,7 @@ public abstract scope class Put : SingleKey
             this.writer.write(DhtConst.Status.E.EmptyValue);
             return;
         }
-        
+
         if (!this.isSizeAllowed(value.length))
         {
             this.writer.write(DhtConst.Status.E.OutOfMemory);
