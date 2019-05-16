@@ -51,11 +51,20 @@ public template RequestCore ( )
 
 *******************************************************************************/
 
-public template IRequestHandlerRequestCore ( )
+public template IRequestHandlerRequestCore ( immutable char[] RequestName,
+    ubyte RequestCode )
 {
     import ocean.core.Verify;
     import swarm.neo.node.RequestOnConn;
+    import swarm.neo.request.Command;
     import dhtproto.node.neo.request.core.IRequestResources;
+
+    /// Struct defining the information transmitted from client to node to start
+    /// a request.
+    public static immutable Command command = Command(RequestCode, 0);
+
+    /// The name of the request
+    public static immutable char[] name = RequestName;
 
     /// Request-on-conn of this request handler.
     private RequestOnConn connection;
