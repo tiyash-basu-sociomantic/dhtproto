@@ -63,7 +63,7 @@ public struct GetChannels
     {
         import ocean.core.array.Mutation : copy;
         import ocean.core.array.Search : contains;
-        import swarm.neo.util.VoidBufferAsArrayOf;
+        import ocean.util.container.VoidBufferAsArrayOf;
 
         /// Shared working data required for core all-nodes request behaviour.
         AllNodesRequestSharedWorkingData all_nodes;

@@ -337,7 +337,7 @@ private scope class GetHashRangeHandler
 
                         default:
                             log.error("Unknown message code {} received", msg_type);
-                            throw this.conn.shutdownWithProtocolError(
+                            this.conn.shutdownWithProtocolError(
                                 "Message parsing error");
                     }
                 }
