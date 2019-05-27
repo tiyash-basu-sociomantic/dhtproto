@@ -124,7 +124,7 @@ public abstract scope class SingleKey : SingleChannel
 
     ***************************************************************************/
 
-    abstract protected bool isAllowed ( cstring key );
+    abstract protected bool isAllowed ( hash_t key );
 
     /***************************************************************************
 
@@ -136,5 +136,5 @@ public abstract scope class SingleKey : SingleChannel
     ***************************************************************************/
 
     abstract protected void handleSingleKeyRequest( cstring channel_name,
-        cstring key );
+        hash_t key );
 }

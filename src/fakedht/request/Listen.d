@@ -60,7 +60,7 @@ public scope class Listen : Protocol.Listen, DhtListener
 
     /***************************************************************************
 
-        Indicates that channel has been deleted and request needs to be 
+        Indicates that channel has been deleted and request needs to be
         terminated
 
     ***************************************************************************/
@@ -73,7 +73,7 @@ public scope class Listen : Protocol.Listen, DhtListener
 
     ***************************************************************************/
 
-    private istring[] remaining_keys;
+    private hash_t[] remaining_keys;
 
     /***************************************************************************
 
@@ -141,7 +141,7 @@ public scope class Listen : Protocol.Listen, DhtListener
 
     ***************************************************************************/
 
-    override protected bool getNextRecord( cstring channel_name, mstring key,
+    override protected bool getNextRecord( cstring channel_name, hash_t key,
         out Const!(void)[] value )
     {
         verify(key.length == HashDigits);
@@ -203,18 +203,18 @@ public scope class Listen : Protocol.Listen, DhtListener
 
     ***************************************************************************/
 
-    public void trigger ( Code code, cstring key )
+    public void trigger ( Code code, hash_t key )
     {
         with (Code) switch (code)
         {
             case DataReady:
-                this.remaining_keys ~= idup(key);
+                this.remaining_keys ~= key;
                 break;
             case Finish:
                 this.channel_deleted = true;
                 break;
             default:
-               break; 
+               break;
         }
 
         this.event.trigger();

@@ -54,11 +54,11 @@ public abstract scope class Get : SingleKey
     /***************************************************************************
 
         Force "accept-all" behaviour for `isAllowed`
-        
+
         Hash range check isn't done for read (Get) requests. It's a practical
         concern to keep the dht running as best as possible, while a
         redistribution is in progress.
-        
+
         The situation is as follows:
         1. all writing clients are shut down. Readers stay active.
         2. a redistribution is triggered
@@ -71,13 +71,13 @@ public abstract scope class Get : SingleKey
 
     ***************************************************************************/
 
-    final override protected bool isAllowed ( cstring key )
+    final override protected bool isAllowed ( hash_t key )
     {
         return true;
     }
 
     /***************************************************************************
-    
+
         Sends queried record to client
 
         Params:
@@ -88,7 +88,7 @@ public abstract scope class Get : SingleKey
     ***************************************************************************/
 
     final override protected void handleSingleKeyRequest ( cstring channel_name,
-        cstring key )
+        hash_t key )
     {
         this.writer.write(DhtConst.Status.E.Ok);
         this.writer.writeArray(this.getValue(channel_name, key));
@@ -108,5 +108,5 @@ public abstract scope class Get : SingleKey
 
     ***************************************************************************/
 
-    abstract protected Const!(void)[] getValue ( cstring channel_name, cstring key );
+    abstract protected Const!(void)[] getValue ( cstring channel_name, hash_t key );
 }

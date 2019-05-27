@@ -308,7 +308,7 @@ class Channel
 
     ***************************************************************************/
 
-    private ValueType[istring] data;
+    private ValueType[hash_t] data;
 
     /***************************************************************************
 
@@ -358,23 +358,10 @@ class Channel
 
     ***************************************************************************/
 
-    public ValueType get ( cstring key )
+    public ValueType get ( hash_t key )
     {
         auto value = key in this.data;
         return (value is null) ? null : *value;
-    }
-
-    /***************************************************************************
-
-        Ditto
-
-    ***************************************************************************/
-
-    public ValueType get ( hash_t key )
-    {
-        mstring key_str;
-        sformat(key_str, "{:x16}", key);
-        return this.get(key_str);
     }
 
     /***************************************************************************
@@ -390,24 +377,11 @@ class Channel
 
     ***************************************************************************/
 
-    public ValueType getVerify ( cstring key )
+    public ValueType getVerify ( hash_t key )
     {
         auto value = key in this.data;
         enforce!(MissingRecordException)(value !is null, idup(key));
         return *value;
-    }
-
-    /***************************************************************************
-
-        Ditto
-
-    ***************************************************************************/
-
-    public ValueType getVerify ( hash_t key )
-    {
-        mstring key_str;
-        sformat(key_str, "{:x16}", key);
-        return this.getVerify(key_str);
     }
 
     /***************************************************************************
@@ -423,25 +397,12 @@ class Channel
 
     ***************************************************************************/
 
-    public void put ( cstring key, ValueType value )
+    public void put ( hash_t key, ValueType value )
     {
         this.data[key] = value;
         this.listeners.trigger(Listeners.Listener.Code.DataReady, key);
         if (Task.getThis() !is null)
             this.listeners.waitUntilFlushed();
-    }
-
-    /***************************************************************************
-
-        Ditto
-
-    ***************************************************************************/
-
-    public void put ( hash_t key, ValueType value )
-    {
-        mstring key_str;
-        sformat(key_str, "{:x16}", key);
-        this.put(key_str, value);
     }
 
     /***************************************************************************
@@ -471,7 +432,7 @@ class Channel
 
     ***************************************************************************/
 
-    public bool remove ( cstring key )
+    public bool remove ( hash_t key )
     out ( existed )
     {
         assert((key in this.data) is null);
@@ -486,19 +447,6 @@ class Channel
             this.listeners.waitUntilFlushed();
 
         return existed;
-    }
-
-    /***************************************************************************
-
-        Ditto
-
-    ***************************************************************************/
-
-    public bool remove ( hash_t key )
-    {
-        mstring key_str;
-        sformat(key_str, "{:x16}", key);
-        return this.remove(key_str);
     }
 
     /***************************************************************************

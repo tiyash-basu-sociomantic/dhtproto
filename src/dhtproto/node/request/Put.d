@@ -97,7 +97,7 @@ public abstract scope class Put : SingleKey
     protected size_t recordSizeLimit ( );
 
     /***************************************************************************
-    
+
         Stores incoming record
 
         Params:
@@ -108,7 +108,7 @@ public abstract scope class Put : SingleKey
     ***************************************************************************/
 
     final override protected void handleSingleKeyRequest ( cstring channel_name,
-        cstring key )
+        hash_t key )
     {
         auto value = *this.value_buffer;
 
@@ -123,7 +123,7 @@ public abstract scope class Put : SingleKey
             this.writer.write(DhtConst.Status.E.EmptyValue);
             return;
         }
-        
+
         if (!this.isSizeAllowed(value.length))
         {
             this.writer.write(DhtConst.Status.E.OutOfMemory);
@@ -170,6 +170,6 @@ public abstract scope class Put : SingleKey
 
     ***************************************************************************/
 
-    abstract protected bool putRecord ( cstring channel, cstring key,
+    abstract protected bool putRecord ( cstring channel, hash_t key,
         in void[] value );
 }

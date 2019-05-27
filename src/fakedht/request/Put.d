@@ -55,11 +55,11 @@ public scope class Put : Protocol.Put
 
     ***************************************************************************/
 
-    override protected bool isAllowed ( cstring key )
+    override protected bool isAllowed ( hash_t key )
     {
         return true;
     }
- 
+
     /***************************************************************************
 
         Verifies that this node is allowed to store records of given size
@@ -91,7 +91,7 @@ public scope class Put : Protocol.Put
 
     ***************************************************************************/
 
-    override protected bool putRecord ( cstring channel, cstring key,
+    override protected bool putRecord ( cstring channel, hash_t key,
         in void[] value )
     {
         global_storage.getCreate(channel).put(key, value);

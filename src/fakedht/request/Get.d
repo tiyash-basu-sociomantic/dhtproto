@@ -56,7 +56,7 @@ public scope class Get : Protocol.Get
 
     ***************************************************************************/
 
-    override protected Const!(void)[] getValue ( cstring channel_name, cstring key )
+    override protected Const!(void)[] getValue ( cstring channel_name, hash_t key )
     {
         auto channel = global_storage.get(channel_name);
         if (channel is null)

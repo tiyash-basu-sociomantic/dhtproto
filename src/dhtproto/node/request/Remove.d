@@ -52,7 +52,7 @@ public abstract scope class Remove : SingleKey
     }
 
     /***************************************************************************
-    
+
         Params:
             channel_name = channel name for request that was read and validated
                 earlier
@@ -61,7 +61,7 @@ public abstract scope class Remove : SingleKey
     ***************************************************************************/
 
     final override protected void handleSingleKeyRequest( cstring channel_name,
-        cstring key )
+        hash_t key )
     {
         this.writer.write(DhtConst.Status.E.Ok);
         this.remove(channel_name, key);
@@ -77,5 +77,5 @@ public abstract scope class Remove : SingleKey
 
     ***************************************************************************/
 
-    abstract protected void remove ( cstring channel_name, cstring key );
+    abstract protected void remove ( cstring channel_name, hash_t key );
 }

@@ -54,7 +54,7 @@ public class Remove : Protocol.Remove
 
     ***************************************************************************/
 
-    override protected bool isAllowed ( cstring key )
+    override protected bool isAllowed ( hash_t key )
     {
         return true;
     }
@@ -69,7 +69,7 @@ public class Remove : Protocol.Remove
 
     ***************************************************************************/
 
-    override protected void remove ( cstring channel_name, cstring key )
+    override protected void remove ( cstring channel_name, hash_t key )
     {
         auto channel = global_storage.get(channel_name);
         if (channel !is null)

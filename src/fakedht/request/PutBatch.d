@@ -54,7 +54,7 @@ public scope class PutBatch : Protocol.PutBatch
 
     ***************************************************************************/
 
-    override protected bool isAllowed ( cstring key )
+    override protected bool isAllowed ( hash_t key )
     {
         return true;
     }
@@ -90,7 +90,7 @@ public scope class PutBatch : Protocol.PutBatch
 
     ***************************************************************************/
 
-    override protected bool putRecord ( cstring channel, cstring key,
+    override protected bool putRecord ( cstring channel, hash_t key,
         in void[] value )
     {
         global_storage.getCreate(channel).put(key, value);

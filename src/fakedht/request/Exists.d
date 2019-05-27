@@ -56,7 +56,7 @@ public scope class Exists : Protocol.Exists
 
     ***************************************************************************/
 
-    override protected bool recordExists ( cstring channel_name, cstring key )
+    override protected bool recordExists ( cstring channel_name, hash_t key )
     {
         auto channel = global_storage.get(channel_name);
         if (channel is null)
