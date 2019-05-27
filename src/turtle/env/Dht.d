@@ -206,11 +206,7 @@ public class Dht : Node!(DhtNode, "dht")
 
     public hash_t[] getAllKeys ( cstring channel )
     {
-        auto string_keys = global_storage.getVerify(channel).getKeys();
-        hash_t[] result;
-        foreach (key; string_keys)
-            result ~= toUlong(key, 16);
-        return result;
+        return global_storage.getVerify(channel).getKeys();
     }
 
     /***************************************************************************

@@ -35,7 +35,7 @@ import swarm.node.storage.listeners.Listeners;
 
 *******************************************************************************/
 
-public alias IListenerTemplate!(cstring) DhtListener;
+public alias IListenerTemplate!(hash_t) DhtListener;
 
 /*******************************************************************************
 
@@ -137,7 +137,7 @@ struct DHT
         auto channel = this.get(channel_name);
         if (channel !is null)
         {
-            channel.listeners.trigger(DhtListener.Code.Finish, "");
+            channel.listeners.trigger(DhtListener.Code.Finish, 0);
             this.channels.remove(idup(channel_name));
         }
     }
@@ -212,7 +212,7 @@ class Channel
 
     ***************************************************************************/
 
-    private class Listeners : IListeners!(cstring)
+    private class Listeners : IListeners!(hash_t)
     {
         /***********************************************************************
 
@@ -289,7 +289,7 @@ class Channel
 
         ***********************************************************************/
 
-        override protected void trigger_ ( DhtListener.Code code, cstring key )
+        override protected void trigger_ ( DhtListener.Code code, hash_t key )
         {
             this.sending_listeners += this.listeners.length;
             super.trigger_(code, key);
@@ -340,12 +340,12 @@ class Channel
 
     ***************************************************************************/
 
-    public istring[] getKeys ( )
+    public hash_t[] getKeys ( )
     {
-        istring[] result;
+        hash_t[] result;
 
         foreach (key, value; this.data)
-            result ~= CTFE.toString(key);
+            result ~= key;
 
         return result;
     }
@@ -403,7 +403,7 @@ class Channel
     {
         this.data[key] = value;
         this.listeners.trigger(Listeners.Listener.Code.DataReady,
-            CTFE.toString(key));
+            key);
         if (Task.getThis() !is null)
             this.listeners.waitUntilFlushed();
     }
@@ -446,7 +446,7 @@ class Channel
         this.data.remove(key);
 
         this.listeners.trigger(Listeners.Listener.Code.Deletion,
-            CTFE.toString(key));
+            key);
         if (Task.getThis() !is null)
             this.listeners.waitUntilFlushed();
 
@@ -571,7 +571,7 @@ unittest
     {
         size_t count;
 
-        override void trigger ( Code, cstring )
+        override void trigger ( Code, hash_t )
         {
             channel.listenerFlushed();
             ++count;

@@ -47,6 +47,7 @@ public template ChannelIteration ( IterationKind kind,
     import ocean.core.Tuple;
     import ocean.core.TypeConvert;
     import ocean.core.Verify;
+    import CTFE = ocean.meta.codegen.CTFE;
     import ocean.text.convert.Hash : toHashT;
 
     /***************************************************************************
@@ -70,7 +71,7 @@ public template ChannelIteration ( IterationKind kind,
 
     ***************************************************************************/
 
-    private istring[] remaining_keys;
+    private hash_t[] remaining_keys;
 
     /***************************************************************************
 
@@ -102,7 +103,7 @@ public template ChannelIteration ( IterationKind kind,
 
         // add dummy entry at front so that it can be moved forward
         // in the beginning of `getNext`
-        this.remaining_keys = "dummy"[] ~ this.remaining_keys;
+        this.remaining_keys = [cast(hash_t)0] ~ this.remaining_keys;
         return true;
     }
 
@@ -133,18 +134,14 @@ public template ChannelIteration ( IterationKind kind,
 
             static if (kind == IterationKind.Key)
             {
-                args[0] = this.remaining_keys[0].dup;
+                args[0] = CTFE.toString(this.remaining_keys[0]).dup;
             }
             else
             {
-                args[0] = this.remaining_keys[0].dup;
-
-                hash_t key;
-                auto ok = toHashT(this.remaining_keys[0], key);
-                verify(ok);
+                args[0] = CTFE.toString(this.remaining_keys[0]).dup;
 
                 args[1] = castFrom!(Const!(void)[]).to!(cstring)(
-                    this.channel.get(key)).dup;
+                    this.channel.get(this.remaining_keys[0])).dup;
             }
 
             if (predicate(args))

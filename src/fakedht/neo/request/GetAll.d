@@ -57,7 +57,7 @@ public class GetAllImpl_v0 : GetAllProtocol_v0
     private Channel channel;
 
     /// List of keys to visit during an iteration.
-    private istring[] iterate_keys;
+    private hash_t[] iterate_keys;
 
     /***************************************************************************
 
@@ -103,11 +103,8 @@ public class GetAllImpl_v0 : GetAllProtocol_v0
         this.iterate_keys = this.channel.getKeys();
 
         size_t index = this.iterate_keys.length;
-        foreach_reverse ( i, str_key; this.iterate_keys )
+        foreach_reverse ( i, key; this.iterate_keys )
         {
-            hash_t key;
-            auto ok = toHashT(str_key, key);
-            verify(ok);
             if ( key == continue_from )
             {
                 index = i;
@@ -141,12 +138,9 @@ public class GetAllImpl_v0 : GetAllProtocol_v0
         if ( this.iterate_keys.length == 0 )
             return false;
 
-        auto str_key = this.iterate_keys[$-1];
+        auto key = this.iterate_keys[$-1];
         this.iterate_keys.length = this.iterate_keys.length - 1;
 
-        hash_t key;
-        auto ok = toHashT(str_key, key);
-        verify(ok);
         auto value = this.channel.get(key);
 
         dg(key, value);

@@ -63,7 +63,7 @@ public class MirrorImpl_v0 : MirrorProtocol_v0, DhtListener
     private cstring channel_name;
 
     /// List of keys to visit during an iteration.
-    private istring[] iterate_keys;
+    private hash_t[] iterate_keys;
 
     /***************************************************************************
 
@@ -179,9 +179,6 @@ public class MirrorImpl_v0 : MirrorProtocol_v0, DhtListener
         auto key = this.iterate_keys[$-1];
         this.iterate_keys.length = this.iterate_keys.length - 1;
 
-        auto ok = toHashT(key, hash_key);
-        verify(ok);
-
         return true;
     }
 
@@ -196,25 +193,16 @@ public class MirrorImpl_v0 : MirrorProtocol_v0, DhtListener
 
     ***************************************************************************/
 
-    public void trigger ( Code code, cstring key )
+    public void trigger ( Code code, hash_t key )
     {
         with ( Code ) switch ( code )
         {
             case DataReady:
-                hash_t hash_key;
-                auto ok = toHashT(key, hash_key);
-                verify(ok);
-
-                this.updated(Update(UpdateType.Change, hash_key));
+                this.updated(Update(UpdateType.Change, key));
                 break;
 
             case Deletion:
-                hash_t hash_key;
-                auto ok = toHashT(key, hash_key);
-                verify(ok);
-                verify(ok);
-
-                this.updated(Update(UpdateType.Deletion, hash_key));
+                this.updated(Update(UpdateType.Deletion, key));
                 break;
 
             case Finish:
