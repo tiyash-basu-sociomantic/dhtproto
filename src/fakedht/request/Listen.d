@@ -144,12 +144,10 @@ public scope class Listen : Protocol.Listen, DhtListener
     override protected bool getNextRecord( cstring channel_name, hash_t key,
         out Const!(void)[] value )
     {
-        verify(key.length == HashDigits);
-
         if (this.remaining_keys.length == 0)
             return false;
 
-        key[] = this.remaining_keys[0];
+        key = this.remaining_keys[0];
         value = this.channel.getVerify(key);
         this.remaining_keys = this.remaining_keys[1 .. $].dup;
 

@@ -21,6 +21,8 @@ module fakedht.Storage;
 import ocean.transition;
 
 import ocean.core.Enforce;
+import ocean.core.TypeConvert;
+import CTFE = ocean.meta.codegen.CTFE;
 import ocean.task.Task;
 import ocean.task.Scheduler;
 
@@ -343,7 +345,7 @@ class Channel
         istring[] result;
 
         foreach (key, value; this.data)
-            result ~= key;
+            result ~= CTFE.toString(key);
 
         return result;
     }
@@ -380,7 +382,7 @@ class Channel
     public ValueType getVerify ( hash_t key )
     {
         auto value = key in this.data;
-        enforce!(MissingRecordException)(value !is null, idup(key));
+        enforce!(MissingRecordException)(value !is null, CTFE.toString(key));
         return *value;
     }
 
@@ -400,7 +402,8 @@ class Channel
     public void put ( hash_t key, ValueType value )
     {
         this.data[key] = value;
-        this.listeners.trigger(Listeners.Listener.Code.DataReady, key);
+        this.listeners.trigger(Listeners.Listener.Code.DataReady,
+            CTFE.toString(key));
         if (Task.getThis() !is null)
             this.listeners.waitUntilFlushed();
     }
@@ -440,9 +443,10 @@ class Channel
     body
     {
         auto existed = (key in this.data) !is null;
-        this.data.remove(idup(key));
+        this.data.remove(key);
 
-        this.listeners.trigger(Listeners.Listener.Code.Deletion, key);
+        this.listeners.trigger(Listeners.Listener.Code.Deletion,
+            CTFE.toString(key));
         if (Task.getThis() !is null)
             this.listeners.waitUntilFlushed();
 
@@ -590,7 +594,8 @@ unittest
 
             try
             {
-                channel.put("key", "value");
+                hash_t key = 3141596;
+                channel.put(key, "value");
             }
             catch ( Exception e )
             {

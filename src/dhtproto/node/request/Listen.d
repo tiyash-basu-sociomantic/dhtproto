@@ -19,6 +19,7 @@ module dhtproto.node.request.Listen;
 *******************************************************************************/
 
 import ocean.transition;
+import CTFE = ocean.meta.codegen.CTFE;
 import ocean.meta.traits.Aggregates : hasMethod;
 import ocean.io.select.client.model.ISelectClient;
 
@@ -101,12 +102,12 @@ public abstract scope class Listen : SingleChannel
 
             this.writer.fiber.register(this.writer);
 
-            Hash.HexDigest key;
+            hash_t key;
             Const!(void)[] value;
 
-            while (this.getNextRecord(channel_name, key[], value))
+            while (this.getNextRecord(channel_name, key, value))
             {
-                this.writer.writeArray(key);
+                this.writer.writeArray(CTFE.toString(key));
                 this.writer.writeArray(value);
             }
 

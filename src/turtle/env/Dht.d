@@ -123,12 +123,7 @@ public class Dht : Node!(DhtNode, "dht")
 
         enforce(serialized_data.length, "Cannot put empty data to the dht!");
 
-        // dht protocol defines keys as strings
-        // but env.Dht tries to mimic swarm client API which uses hash_t
-        char[Hash.HashDigits] str_key;
-        Hash.toHexString(key, str_key);
-
-        global_storage.getCreate(channel).put(str_key.dup, serialized_data);
+        global_storage.getCreate(channel).put(key, serialized_data);
     }
 
     unittest
@@ -165,14 +160,9 @@ public class Dht : Node!(DhtNode, "dht")
 
     ***************************************************************************/
 
-    public T get ( T = mstring ) ( cstring channel, size_t key )
+    public T get ( T = mstring ) ( cstring channel, hash_t key )
     {
-        // dht protocol defines keys as strings
-        // but env.Dht tries to mimic swarm client API which uses hash_t
-        char[Hash.HashDigits] str_key;
-        Hash.toHexString(key, str_key);
-
-        auto data = global_storage.getVerify(channel).getVerify(str_key[]);
+        auto data = global_storage.getVerify(channel).getVerify(key);
 
         static if (is(T : cstring))
             return cast(T) data.dup;
@@ -308,21 +298,18 @@ public class Dht : Node!(DhtNode, "dht")
     public void expectRecordChange ( cstring channel, hash_t key,
         double timeout = 1.0, double check_interval = 0.05 )
     {
-        char[Hash.HashDigits] str_key;
-        Hash.toHexString(key, str_key);
-
         // it is ok to retrieve/cache the watched record old value right
         // in this method because test task is still in control and fakedht
         // won't be able to handle request from tested application even if
         // it attempts to modify the record before this method is called
-        auto original = global_storage.getCreate(channel).get(str_key);
+        auto original = global_storage.getCreate(channel).get(key);
 
         this.waitForCondition(timeout, check_interval,
             {
-                return original != global_storage.getCreate(channel).get(str_key);
+                return original != global_storage.getCreate(channel).get(key);
             },
             .format("No change for record {} in channel '{}' during {} seconds",
-                str_key, channel, timeout)
+                key, channel, timeout)
         );
     }
 
@@ -350,15 +337,12 @@ public class Dht : Node!(DhtNode, "dht")
         scope bool delegate ( in void[] record ) dg,
         double timeout = 1.0, double check_interval = 0.05 )
     {
-        char[Hash.HashDigits] str_key;
-        Hash.toHexString(key, str_key);
-
         this.waitForCondition(timeout, check_interval,
             {
-                return dg(global_storage.getCreate(channel).get(str_key));
+                return dg(global_storage.getCreate(channel).get(key));
             },
             .format("Expected condition was not hit for record {} in channel '{}' " ~
-                "during {} seconds", str_key, channel, timeout)
+                "during {} seconds", key, channel, timeout)
         );
     }
 

@@ -31,6 +31,8 @@ import dhtproto.node.request.model.SingleChannel;
 public abstract scope class PutBatch : SingleChannel
 {
     import dhtproto.node.request.model.DhtCommand;
+    import ocean.core.Verify;
+    import ocean.text.convert.Hash : toHashT;
 
     import swarm.util.RecordBatcher;
     import dhtproto.client.legacy.DhtConst;
@@ -85,8 +87,12 @@ public abstract scope class PutBatch : SingleChannel
         auto decompressor = this.resources.getRecordBatch();
         decompressor.decompress(cast(ubyte[]) *this.record_buffer);
 
-        foreach ( key, value; decompressor )
+        foreach ( str_key, value; decompressor )
         {
+            hash_t key;
+            auto ok = toHashT(str_key, key);
+            verify(ok);
+
             if (!value.length)
             {
                 this.writer.write(DhtConst.Status.E.EmptyValue);

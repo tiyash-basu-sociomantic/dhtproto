@@ -30,7 +30,7 @@ enum IterationKind
 /*******************************************************************************
 
     Common code shared by all requests that implement protocol based on
-    dhtproto.node.request.model.CompressedBatch 
+    dhtproto.node.request.model.CompressedBatch
 
     Template Params:
         kind = indicates which version of getNext to generate
@@ -46,6 +46,8 @@ public template ChannelIteration ( IterationKind kind,
     import ocean.transition;
     import ocean.core.Tuple;
     import ocean.core.TypeConvert;
+    import ocean.core.Verify;
+    import ocean.text.convert.Hash : toHashT;
 
     /***************************************************************************
 
@@ -105,7 +107,7 @@ public template ChannelIteration ( IterationKind kind,
     }
 
     /***************************************************************************
-        
+
         Iterates records for the protocol
 
         Params:
@@ -126,7 +128,7 @@ public template ChannelIteration ( IterationKind kind,
             this.remaining_keys = this.remaining_keys[1 .. $];
 
             // no more data
-            if (this.remaining_keys.length == 0) 
+            if (this.remaining_keys.length == 0)
                 return false;
 
             static if (kind == IterationKind.Key)
@@ -136,8 +138,13 @@ public template ChannelIteration ( IterationKind kind,
             else
             {
                 args[0] = this.remaining_keys[0].dup;
+
+                hash_t key;
+                auto ok = toHashT(this.remaining_keys[0], key);
+                verify(ok);
+
                 args[1] = castFrom!(Const!(void)[]).to!(cstring)(
-                    this.channel.get(this.remaining_keys[0])).dup;
+                    this.channel.get(key)).dup;
             }
 
             if (predicate(args))

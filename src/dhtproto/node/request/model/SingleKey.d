@@ -34,6 +34,8 @@ import dhtproto.node.request.model.SingleChannel;
 
 public abstract scope class SingleKey : SingleChannel
 {
+    import ocean.core.Verify;
+    import ocean.text.convert.Hash : toHashT;
     import dhtproto.node.request.model.DhtCommand;
 
     import dhtproto.client.legacy.DhtConst;
@@ -101,7 +103,11 @@ public abstract scope class SingleKey : SingleChannel
 
     final override protected void handleChannelRequest ( cstring channel_name )
     {
-        auto key = *this.key_buffer;
+        auto str_key = *this.key_buffer;
+
+        hash_t key;
+        auto ok = toHashT(str_key, key);
+        verify(ok);
 
         if (!this.isAllowed(key))
         {
