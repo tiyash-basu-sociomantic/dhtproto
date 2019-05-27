@@ -30,6 +30,8 @@ import dhtproto.node.request.model.SingleChannel;
 
 public abstract scope class PutBatch : SingleChannel
 {
+    import ocean.core.Verify;
+    import ocean.text.convert.Hash;
     import dhtproto.node.request.model.DhtCommand;
 
     import swarm.util.RecordBatcher;
@@ -105,7 +107,11 @@ public abstract scope class PutBatch : SingleChannel
                 return;
             }
 
-            if (!this.putRecord(channel_name, key, value))
+            hash_t hash_key;
+            auto ok = toHashT(key, hash_key);
+            verify(ok);
+
+            if (!this.putRecord(channel_name, hash_key, value))
             {
                 this.writer.write(DhtConst.Status.E.Error);
                 return;
@@ -157,6 +163,6 @@ public abstract scope class PutBatch : SingleChannel
 
     ***************************************************************************/
 
-    abstract protected bool putRecord ( cstring channel, cstring key,
+    abstract protected bool putRecord ( cstring channel, hash_t key,
         in void[] value );
  }

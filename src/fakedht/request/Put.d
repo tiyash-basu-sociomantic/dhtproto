@@ -91,10 +91,11 @@ public scope class Put : Protocol.Put
 
     ***************************************************************************/
 
-    override protected bool putRecord ( cstring channel, cstring key,
+    override protected bool putRecord ( cstring channel, hash_t key,
         in void[] value )
     {
-        global_storage.getCreate(channel).put(key, value);
+        cstring key_slice = ((cast(char*)&key)[0..key.sizeof]).dup;
+        global_storage.getCreate(channel).put(key_slice, value);
         return true;
     }
 

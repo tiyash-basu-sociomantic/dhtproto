@@ -69,10 +69,13 @@ public class Remove : Protocol.Remove
 
     ***************************************************************************/
 
-    override protected void remove ( cstring channel_name, cstring key )
+    override protected void remove ( cstring channel_name, hash_t key )
     {
         auto channel = global_storage.get(channel_name);
         if (channel !is null)
-            channel.remove(key);
+        {
+            cstring key_slice = ((cast(char*)&key)[0..key.sizeof]).dup;
+            channel.remove(key_slice);
+        }
     }
 }

@@ -54,14 +54,15 @@ public scope class Get : Protocol.Get
 
     ***************************************************************************/
 
-    override protected void getValue ( cstring channel_name, cstring key,
+    override protected void getValue ( cstring channel_name, hash_t key,
         scope void delegate ( const(void)[] ) value_getter_dg )
     {
         auto channel = global_storage.get(channel_name);
 
         if (channel !is null)
         {
-            value_getter_dg(channel.get(key));
+            cstring key_slice = ((cast(char*)&key)[0..key.sizeof]).dup;
+            value_getter_dg(channel.get(key_slice));
         }
     }
 }

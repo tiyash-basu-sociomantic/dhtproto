@@ -30,6 +30,8 @@ import dhtproto.node.request.model.SingleKey;
 
 public abstract scope class Remove : SingleKey
 {
+    import ocean.core.Verify;
+    import ocean.text.convert.Hash;
     import dhtproto.node.request.model.DhtCommand;
 
     import dhtproto.client.legacy.DhtConst;
@@ -64,7 +66,12 @@ public abstract scope class Remove : SingleKey
         cstring key )
     {
         this.writer.write(DhtConst.Status.E.Ok);
-        this.remove(channel_name, key);
+
+        hash_t hash_key;
+        auto ok = toHashT(key, hash_key);
+        verify(ok);
+
+        this.remove(channel_name, hash_key);
     }
 
     /***************************************************************************
@@ -77,5 +84,5 @@ public abstract scope class Remove : SingleKey
 
     ***************************************************************************/
 
-    abstract protected void remove ( cstring channel_name, cstring key );
+    abstract protected void remove ( cstring channel_name, hash_t key );
 }

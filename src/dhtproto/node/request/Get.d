@@ -30,6 +30,8 @@ import dhtproto.node.request.model.SingleKey;
 
 public abstract scope class Get : SingleKey
 {
+    import ocean.core.Verify;
+    import ocean.text.convert.Hash;
     import dhtproto.node.request.model.DhtCommand;
 
     import dhtproto.client.legacy.DhtConst;
@@ -91,7 +93,12 @@ public abstract scope class Get : SingleKey
         cstring key )
     {
         this.writer.write(DhtConst.Status.E.Ok);
-        this.getValue(channel_name, key,
+
+        hash_t hash_key;
+        auto ok = toHashT(key, hash_key);
+        verify(ok);
+
+        this.getValue(channel_name, hash_key,
             ( const(void)[] value )
             {
                 this.writer.writeArray(value);
@@ -114,6 +121,6 @@ public abstract scope class Get : SingleKey
 
     ***************************************************************************/
 
-    abstract protected void getValue ( cstring channel_name, cstring key,
+    abstract protected void getValue ( cstring channel_name, hash_t key,
         scope void delegate ( const(void)[] ) value_getter_dg );
 }

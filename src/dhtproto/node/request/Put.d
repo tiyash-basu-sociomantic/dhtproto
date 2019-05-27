@@ -30,6 +30,9 @@ import dhtproto.node.request.model.SingleKey;
 
 public abstract scope class Put : SingleKey
 {
+    import ocean.core.Verify;
+    import ocean.text.convert.Hash;
+
     import dhtproto.node.request.model.DhtCommand;
 
     import dhtproto.client.legacy.DhtConst;
@@ -123,14 +126,18 @@ public abstract scope class Put : SingleKey
             this.writer.write(DhtConst.Status.E.EmptyValue);
             return;
         }
-        
+
         if (!this.isSizeAllowed(value.length))
         {
             this.writer.write(DhtConst.Status.E.OutOfMemory);
             return;
         }
 
-        if (!this.putRecord(channel_name, key, value))
+        hash_t hash_key;
+        auto ok = toHashT(key, hash_key);
+        verify(ok);
+
+        if (!this.putRecord(channel_name, hash_key, value))
         {
             this.writer.write(DhtConst.Status.E.Error);
             return;
@@ -170,6 +177,6 @@ public abstract scope class Put : SingleKey
 
     ***************************************************************************/
 
-    abstract protected bool putRecord ( cstring channel, cstring key,
+    abstract protected bool putRecord ( cstring channel, hash_t key,
         in void[] value );
 }
